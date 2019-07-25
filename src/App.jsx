@@ -1,10 +1,17 @@
 import React from 'react'
 
+// Redux
+import { Provider } from 'react-redux'
+
+import store from './store'
+
 const App = () => (
-  <div>
-    <h1>Hello World!</h1>
-    with ReactJs
-  </div>
+  <Provider store={store}>
+    <div>
+      <h1>Hello World!</h1>
+      with ReactJs
+    </div>
+  </Provider>
 )
 
 export default App
