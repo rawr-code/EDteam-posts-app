@@ -1,1 +1,7 @@
-This folder contains a basic configuration to work with Reactjs, Css and Sass 😁👌
+## EDteam Post App 😁👌
+
+Hecha con:
+
+> React, Redux, Styled Components
+
+💖 EDteam Love 😍
