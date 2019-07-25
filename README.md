@@ -4,4 +4,4 @@ Hecha con:
 
 > React, Redux, Styled Components
 
-💖 EDteam Love 😍
+💖 EDteam Lover 😍
