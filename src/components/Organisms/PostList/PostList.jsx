@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
@@ -10,6 +10,9 @@ import { getPosts, deletePost, editPostData } from '../../../store/modules/data/
 
 // Atoms
 import { Button } from '../../Atoms'
+
+// Molecules
+import { Modal } from '../../Molecules'
 
 const Card = styled.div`
   background-color: #fff;
@@ -38,19 +41,25 @@ const Posts = (props) => {
     data: { loading, posts },
     actions,
   } = props
+  const [message, setMessage] = useState('')
+  const [openModal, setOpenModal] = useState(false)
 
-  useEffect(() => {
-    actions.getPosts()
-  }, [])
+  const handleCloseModal = () => setOpenModal(false)
 
   const handleUpdate = data => () => {
     actions.editPostData(data)
   }
 
   const handleRemove = id => () => {
-    actions.deletePost(id).then(res => console.log(res))
+    actions.deletePost(id).then((res) => {
+      setMessage(res.msg)
+      setOpenModal(true)
+    })
   }
 
+  useEffect(() => {
+    actions.getPosts()
+  }, [])
   return (
     <div>
       {loading && (
@@ -82,6 +91,9 @@ const Posts = (props) => {
           </li>
         ))}
       </ul>
+      <Modal open={openModal} onClose={handleCloseModal} title={message}>
+        <div>text example</div>
+      </Modal>
     </div>
   )
 }

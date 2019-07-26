@@ -10,7 +10,7 @@ import { newPost, updatePost } from '../../../store/modules/data/actions'
 
 // Atoms
 import { Button, Title } from '../../Atoms'
-import TextField from '../../Molecules/TextField'
+import { Modal, TextField } from '../../Molecules'
 
 // Logo
 import Logo from '../../../images/logo.svg'
@@ -24,33 +24,14 @@ const PostsFormWrapper = styled.div`
 
 const PostForm = (props) => {
   const { data, actions } = props
+  const [message, setMessage] = useState('')
+  const [openModal, setOpenModal] = useState(false)
   const [postId, setPostId] = useState('')
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [disabledButton, setDisabledButton] = useState(true)
 
-  useEffect(() => {
-    setPostId(data.editPostData.id)
-    setTitle(data.editPostData.title)
-    setBody(data.editPostData.body)
-  }, [data.editPostData])
-
-  useEffect(() => {
-    if (title && body) {
-      setDisabledButton(false)
-    } else {
-      setDisabledButton(true)
-    }
-  }, [title, body])
-
-  // if (Object.keys(data.editPostData).length > 0) {
-  //   if (data.editPostData.title) {
-  //     setTitle(data.editPostData.title)
-  //   }
-  //   if (data.editPostData.body) {
-  //     setBody(data.editPostData.body)
-  //   }
-  // }
+  const handleCloseModal = () => setOpenModal(false)
 
   const handleChange = (e) => {
     const { value, name } = e.target
@@ -68,22 +49,37 @@ const PostForm = (props) => {
     if (postId) {
       newData.id = postId
       actions.updatePost(newData).then((res) => {
-        console.log(res)
+        setMessage(res.msg)
         setPostId('')
         setTitle('')
         setBody('')
         setDisabledButton(true)
+        setOpenModal(true)
       })
     } else {
       actions.newPost(newData).then((res) => {
-        console.log(res)
+        setMessage(res.msg)
         setTitle('')
         setBody('')
         setDisabledButton(true)
+        setOpenModal(true)
       })
     }
   }
 
+  useEffect(() => {
+    setPostId(data.editPostData.id)
+    setTitle(data.editPostData.title)
+    setBody(data.editPostData.body)
+  }, [data.editPostData])
+
+  useEffect(() => {
+    if (title && body) {
+      setDisabledButton(false)
+    } else {
+      setDisabledButton(true)
+    }
+  }, [title, body])
   return (
     <PostsFormWrapper>
       <img src={Logo} alt="logo" width="320" />
@@ -115,6 +111,9 @@ const PostForm = (props) => {
           {postId ? 'Actualizar' : 'Publicar'}
         </Button>
       </form>
+      <Modal open={openModal} onClose={handleCloseModal} title={message}>
+        <div>text example</div>
+      </Modal>
     </PostsFormWrapper>
   )
 }
