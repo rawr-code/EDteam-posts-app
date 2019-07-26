@@ -13,10 +13,7 @@ const INITIAL_STATE = {
   loading: false,
   error: {},
   posts: [],
-  editPostData: {
-    title: '',
-    body: '',
-  },
+  editPostData: {},
 }
 
 export default function (state = INITIAL_STATE, { type, payload }) {

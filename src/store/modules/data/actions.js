@@ -70,8 +70,8 @@ export const updatePost = data => (dispatch) => {
     body: JSON.stringify({ ...rest }),
   })
     .then(res => res.json())
-    .then((result) => {
-      dispatch({ type: UPDATE_POST, payload: result })
+    .then(() => {
+      dispatch({ type: UPDATE_POST, payload: data })
       return {
         success: true,
         msg: 'Actualizado con exito',

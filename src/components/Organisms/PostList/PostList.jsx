@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 
 // Actions
-import { getPosts, updatePost, deletePost } from '../../../store/modules/data/actions'
+import { getPosts, deletePost, editPostData } from '../../../store/modules/data/actions'
 
 // Atoms
 import { Button } from '../../Atoms'
@@ -15,6 +15,8 @@ const Card = styled.div`
   background-color: #fff;
   margin: 40px;
   padding: 10px;
+  border: 1px solid gray;
+  border-radius: 0.25rem;
 `
 const ActionsWrapper = styled.div`
   display: flex;
@@ -42,7 +44,7 @@ const Posts = (props) => {
   }, [])
 
   const handleUpdate = data => () => {
-    actions.updatePost(data).then(res => console.log(res))
+    actions.editPostData(data)
   }
 
   const handleRemove = id => () => {
@@ -88,18 +90,12 @@ Posts.propTypes = {
   data: PropTypes.shape({
     loading: PropTypes.bool,
     posts: PropTypes.array,
-    editPostData: PropTypes.shape({
-      editPostData: {
-        title: '',
-        body: '',
-      },
-    }),
+    editPostData: PropTypes.object,
   }),
   actions: PropTypes.shape({
     getPosts: PropTypes.func,
-    updatePost: PropTypes.func,
-    deletePost: PropTypes.func,
     editPostData: PropTypes.func,
+    deletePost: PropTypes.func,
   }),
 }
 
@@ -115,7 +111,7 @@ const mapStateToProps = ({ data }) => ({
 const mapDispatchToProps = dispatch => ({
   actions: {
     getPosts: () => dispatch(getPosts()),
-    updatePost: payload => dispatch(updatePost(payload)),
+    editPostData: payload => dispatch(editPostData(payload)),
     deletePost: payload => dispatch(deletePost(payload)),
   },
 })

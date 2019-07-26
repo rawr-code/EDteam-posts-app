@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 
 // Actions
-import { newPost, editPostData } from '../../../store/modules/data/actions'
+import { newPost, updatePost } from '../../../store/modules/data/actions'
 
 // Atoms
 import { Button, Title } from '../../Atoms'
@@ -24,34 +24,77 @@ const PostsFormWrapper = styled.div`
 
 const PostForm = (props) => {
   const { data, actions } = props
+  const [postId, setPostId] = useState('')
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
   const [disabledButton, setDisabledButton] = useState(true)
+
+  useEffect(() => {
+    setPostId(data.editPostData.id)
+    setTitle(data.editPostData.title)
+    setBody(data.editPostData.body)
+  }, [data.editPostData])
+
+  useEffect(() => {
+    if (title && body) {
+      setDisabledButton(false)
+    } else {
+      setDisabledButton(true)
+    }
+  }, [title, body])
+
+  // if (Object.keys(data.editPostData).length > 0) {
+  //   if (data.editPostData.title) {
+  //     setTitle(data.editPostData.title)
+  //   }
+  //   if (data.editPostData.body) {
+  //     setBody(data.editPostData.body)
+  //   }
+  // }
 
   const handleChange = (e) => {
     const { value, name } = e.target
-    const newData = {
-      [name]: value,
+    if (name === 'title') {
+      setTitle(value)
+    } else if (name === 'body') {
+      setBody(value)
     }
-    actions.editPostData(newData)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    actions.newPost(data.editPostData).then(res => console.log(res))
-    actions.editPostData({ title: '', body: '' })
-    setDisabledButton(true)
+    const newData = { title, body }
+
+    if (postId) {
+      newData.id = postId
+      actions.updatePost(newData).then((res) => {
+        console.log(res)
+        setPostId('')
+        setTitle('')
+        setBody('')
+        setDisabledButton(true)
+      })
+    } else {
+      actions.newPost(newData).then((res) => {
+        console.log(res)
+        setTitle('')
+        setBody('')
+        setDisabledButton(true)
+      })
+    }
   }
 
   return (
     <PostsFormWrapper>
       <img src={Logo} alt="logo" width="320" />
-      <Title>Nuevo Post</Title>
+      <Title>{`${postId ? 'Editar' : 'Nuevo'} Post`}</Title>
       <form autoComplete="off" onSubmit={handleSubmit}>
         <TextField
           title="Titulo"
           inputProps={{
             type: 'text',
             name: 'title',
-            value: data.editPostData.title,
+            value: title || '',
             onChange: handleChange,
             required: true,
           }}
@@ -63,13 +106,13 @@ const PostForm = (props) => {
             name: 'body',
             cols: '20',
             rows: '5',
-            value: data.editPostData.body,
+            value: body || '',
             onChange: handleChange,
             required: true,
           }}
         />
         <Button type="submit" disabled={disabledButton}>
-          Publicar
+          {postId ? 'Actualizar' : 'Publicar'}
         </Button>
       </form>
     </PostsFormWrapper>
@@ -80,14 +123,11 @@ PostForm.propTypes = {
   data: PropTypes.shape({
     loading: PropTypes.bool,
     posts: PropTypes.array,
-    editPostData: PropTypes.shape({
-      title: '',
-      body: '',
-    }),
+    editPostData: PropTypes.object,
   }),
   actions: PropTypes.shape({
     newPost: PropTypes.func,
-    editPostData: PropTypes.func,
+    updatePost: PropTypes.func,
   }),
 }
 
@@ -103,7 +143,7 @@ const mapStateToProps = ({ data }) => ({
 const mapDispatchToProps = dispatch => ({
   actions: {
     newPost: payload => dispatch(newPost(payload)),
-    editPostData: payload => dispatch(editPostData(payload)),
+    updatePost: payload => dispatch(updatePost(payload)),
   },
 })
 
